@@ -121,15 +121,11 @@ public class WaitingControler {
 			if(e.getSource() == view.getTextField()){
 
 				send = view.getChatText();
-				// area에 보여지기 위한 거				
 				
-				//total +=ID+":"+ send + "\n";
-				
-				cst = new ChattingSendThread(s,ID, send,view);
-				//crt = new ChattingReceiveThread(s,view);
-				
+				cst = new ChattingSendThread(s,ID,send,view);
 				cst.start();   
-				//crt.start();
+
+				view.getTextArea().setCaretPosition(view.getTextArea().getDocument().getLength());
 			}
 
 		}
@@ -142,7 +138,7 @@ public class WaitingControler {
 				if(w.getRoom_num() < 4) {
 					// 방만들기 창 생성
 					mv = new MakeRoomView();
-					mc = new MakeRoomControler(app,mv,WaitingControler.this,ic);
+					mc = new MakeRoomControler(app,mv,WaitingControler.this,ic,s);
 					mc.buttonHandler();
 					// 생성된 방이 4개 이상일때
 				} else {

@@ -4,24 +4,19 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import View.WaitingView;
+public class CanVasColorSendThread extends Thread {
 
-public class ChattingSendThread extends Thread {
-	private Socket s;
-	private String ID, msg, tot;
-	private WaitingView wv;
+	private Socket s;	//그림판 소켓 변수
+	private String ID;
+	private String color;
 	private DataOutputStream outputstream;
 	
-	public ChattingSendThread(Socket s, String ID,String msg,WaitingView view){
+	public CanVasColorSendThread(Socket s, String color){
 		this.s = s;
-		this.ID=ID;
-		this.msg=msg;
-		this.wv=view;
-		this.tot = this.ID + ":" + this.msg+"\n";
+		this.color=color;	
+		
 		try {
 			outputstream=new DataOutputStream((s.getOutputStream()));
-
-			wv.setInitChatText();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -30,8 +25,10 @@ public class ChattingSendThread extends Thread {
 
 	public void run() {
 		try {
-			outputstream.writeUTF(tot);
-		
+			
+			outputstream.writeUTF(color);
+			
+					
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -40,5 +37,4 @@ public class ChattingSendThread extends Thread {
 			outputstream = null;
 		}
 	}
-
 }

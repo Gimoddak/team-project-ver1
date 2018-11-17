@@ -5,9 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import javax.swing.JOptionPane;
-
-import View.RegisterView;
+import Control.IngameControler;
+import View.IngameView;
 import View.WaitingView;
 
 public class ChattingReceiveThread extends Thread {
@@ -15,7 +14,9 @@ public class ChattingReceiveThread extends Thread {
 	private DataOutputStream outputstream;
 	private Socket s;
 	private WaitingView wv;
-	private String tot,ID,total="";
+	private IngameView iv;
+	private IngameControler ic;
+	private String ID,tot;
 //	int first = 1;
 	public ChattingReceiveThread(Socket s,WaitingView view,String ID) {
 		this.s = s;
@@ -33,17 +34,15 @@ public class ChattingReceiveThread extends Thread {
 		}
 
 	}
+	
 	public void run() {
 		try {
 			
 			while((tot=inputstream.readUTF())!=null) {
 			//tot=inputstream.readUTF();
-				total+=tot+"\n";
 				
-				wv.setChatText(total);	
+				wv.setChatText(tot);	
 		}
-			
-
 		}
 		catch(IOException e){
 			e.printStackTrace();

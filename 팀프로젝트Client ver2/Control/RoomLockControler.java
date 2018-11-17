@@ -1,4 +1,4 @@
-package Control;
+ package Control;
 import View.RoomLockView;
 import Control.WaitingControler;
 import Control.IngameControler;

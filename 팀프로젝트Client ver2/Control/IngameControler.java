@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.net.Socket;
 
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
@@ -14,6 +15,10 @@ import javax.swing.JOptionPane;
 import Model.Ingame;
 import Model.Music;
 import Starter.Application;
+import Thread.CanVasColorReceiveThread;
+import Thread.CanVasColorSendThread;
+import Thread.CanVasReceiveThread;
+import Thread.CanVasSendThread;
 import View.IngameView;
 
 public class IngameControler {
@@ -23,6 +28,14 @@ public class IngameControler {
 	private Mouse mouse;
 	private ToolActionListener tool;
 	private PaintDraw paint;
+	
+	private CanVasSendThread cvst;
+	private	CanVasReceiveThread cvrt;
+	private CanVasColorSendThread cvcst;
+	private CanVasColorReceiveThread cvcrt;
+	
+	private Socket s;
+	private String ID;
 	
 	private Ingame []i;		// 게임 방 객체(Ingame 모델)
 	
@@ -112,6 +125,15 @@ public class IngameControler {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// 그림을 그릴 패널에 대한 마우스 모션리스너 생성
 		public class PaintDraw implements MouseMotionListener
 		{
@@ -119,21 +141,32 @@ public class IngameControler {
 			// 마우스 드래그 메소드
 			@Override
 			public void mouseDragged(MouseEvent e) {
+				
+				
 				// thickness에 setlinethickness_tx에 저장된 문자열값을 정수화시켜 저장함.
 				iv.setThickness(Integer.parseInt(iv.getSetlinethickness_tx().getText()));
 
 				// 끝점 x좌표를 구해 저장.
 				iv.setEndX(e.getX());
-
 				// 끝점 y좌표를 구해 저장.
 				iv.setEndY(e.getY());
-
+				
+				if(e.getX() < 0 || e.getY() < 0 || e.getX() > 895 || e.getY() > 455)
+		         {
+		            return;
+		         }
 				iv.getGraphics2().setStroke(new BasicStroke(iv.getThickness(), BasicStroke.CAP_ROUND, 0));
+				
 				iv.getGraphics2().drawLine(iv.getStartX()+82, iv.getStartY()+100, iv.getEndX()+82, iv.getEndY()+100);
 
+				//writeUFT(e.getX().gety)
+				//writeUTF(getThickness)
 				iv.setStartX(iv.getEndX());
 				iv.setStartY(iv.getEndY());
-
+				
+				
+				cvst=new CanVasSendThread(s, Integer.toString(iv.getStartX()+82) , Integer.toString(iv.getStartY()+100) , Integer.toString(iv.getEndX()+82) ,Integer.toString(iv.getEndY()+100),Integer.toString(iv.getThickness()));
+				cvst.start();
 			}
 
 			// 사용하지 않지만 implements 했기에 남겨둬야함.
@@ -150,13 +183,20 @@ public class IngameControler {
 			// 오버라이딩된 actionPerformed메소드 실행
 			public void actionPerformed(ActionEvent e)	{
 				// 연필버튼이 눌렸을떄 밑 if문장 블록범위내 문장 실행
+				
+				//센드 스레드 불러와라
+				
 				if(e.getSource() == iv.getPencil_bt()) { 
 					if(iv.isTf() == false) {
 						 // 그려지는 색상을 검은색 지정
 						iv.getGraphics2().setColor(Color.BLACK);
+						
+						
 					} else {
 						// 그려지는 색상을 selectedColor변수의 값으로 지정
 						iv.getGraphics2().setColor(iv.getSelectedColor());
+					
+						
 					}
 				// 지우개버튼이 눌렸을떄 밑 if문장 블록범위내 문장 실행
 				} else if(e.getSource() == iv.getEraser_bt())	{
@@ -178,7 +218,10 @@ public class IngameControler {
 					// 패널을 초기화하여 다시 그려준다.
 					iv.repaint();
 				}
+				cvcst=new CanVasColorSendThread(s,String.valueOf(e.getSource()));
+				cvcst.start();
 			}
+			
 		}
 	
 	// 생성자 메소드
@@ -232,6 +275,17 @@ public class IngameControler {
 	public void setPW(int num, String pw) {
 		i[num].setPw(pw);
 	}
+	
+	public void setUserInfo(Socket s, String ID) {
+		
+		  this.s =s;
+		  this.ID= ID;
+		  
+	      cvrt = new CanVasReceiveThread(this.s,iv,this.ID);
+	      cvrt.start();
+	      cvcrt = new CanVasColorReceiveThread(this.s,iv,this.ID);
+	      cvcrt.start();
+ }
 	
 //	// 알 필요 없음
 //	public void setInfo(int num) {

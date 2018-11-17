@@ -79,7 +79,7 @@ public class Application extends JFrame{
       // TODO Auto-generated method stub
       Socket server = null;
       try {
-         server = new Socket("192.168.0.29", 6094);   
+         server = new Socket("192.168.219.101", 6130);   
 
          // 접속 성공시 상태 출력
          if(server != null) {

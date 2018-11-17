@@ -16,7 +16,8 @@ public class WaitingView extends JPanel{
 	private JTextField chatfield_tf, id_tf;
 	private JLabel back_l, menubar_l, character_l;
 	private JPanel user_p, userbottom_p, room_p, roomtop_p, roombot_p, rank_p;
-
+	private JScrollPane scroll;
+	
 	// 배경화면이미지에 관한 이미지아이콘 생성.
 	private ImageIcon back_img = new ImageIcon("C:\\Users\\admin\\Desktop\\prj_Client_v.2\\images\\waitingback.jpg");
 	// 메뉴바에 관한 이미지아이콘 생성.
@@ -135,16 +136,20 @@ public class WaitingView extends JPanel{
 		
 		room_p.setBounds(20, 50, 975, 450);
         
-		chatarea_ta = new JTextArea("채팅판", 50, 10);
-		chatarea_ta.setBounds(20, 510, 975, 155);
+		chatarea_ta = new JTextArea(50,10);
+		chatarea_ta.setEditable(false);
+		
+		scroll = new JScrollPane(chatarea_ta, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.setBounds(20, 510, 975, 155);
 		
 		rank_p = new JPanel();
 		rank_p.setBounds(1010, 50, 250, 450);
 		rank_p.add(sc);
 
 		
-		chatfield_tf = new JTextField("채팅입력란");
-		chatfield_tf.setBounds(20, 660, 975, 58);
+		chatfield_tf = new JTextField("");
+		chatfield_tf.setBounds(20, 665, 975, 48);
+		chatfield_tf.setCaretPosition(chatfield_tf.getText().length());
 		
 		
 		
@@ -172,13 +177,12 @@ public class WaitingView extends JPanel{
         Border emptyBorder = BorderFactory.createEmptyBorder(7, 7, 7, 7);
        
         room_p.setBorder(BorderFactory.createCompoundBorder(lineBorder, emptyBorder));
-        chatarea_ta.setBorder(BorderFactory.createCompoundBorder(lineBorder, emptyBorder));
 		chatfield_tf.setBorder(BorderFactory.createCompoundBorder(lineBorder, emptyBorder));
 		rank_p.setBorder(BorderFactory.createCompoundBorder(lineBorder, emptyBorder));
 		user_p.setBorder(BorderFactory.createCompoundBorder(lineBorder, emptyBorder));
 		
 		add(room_p);
-		add(chatarea_ta);
+		add(scroll);
 		add(chatfield_tf);
 		add(rank_p);
 		add(user_p);
@@ -290,7 +294,12 @@ public class WaitingView extends JPanel{
 	}
 	
 	public void setChatText(String s) {
-		chatarea_ta.setText(s);
+		chatarea_ta.append(s);;
+	}
+	
+	public JTextArea getTextArea()
+	{
+		return chatarea_ta;
 	}
 
 
